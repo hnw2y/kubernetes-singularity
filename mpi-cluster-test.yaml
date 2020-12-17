@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "//c/Users/hw_12/OneDrive/Desktop/research/Singularity_DC/jlab"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mpi-scheduler
+  labels:
+    name: mpi-scheduler
+spec:
+  hostname: mpi-scheduler
+  subdomain: mpi-cluster
+  containers:
+  - image: hannahnw124/slurm_sing_mpi_ctl
+    name: mpi-scheduler
+    volumeMounts:
+    - mountPath: "/home/jovyan/work"
+      name: file-storage
+  volumes:
+  - name: file-storage
+    persistentVolumeClaim:
+      claimName: pv-claim
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mpi-worker-0
+  labels:
+    name: mpi-worker
+spec:
+  hostname: mpi-worker-0
+  subdomain: mpi-cluster
+  containers:
+  - image: hannahnw124/slurm_sing_mpi_1
+    name: mpi-worker
+    securityContext:
+      privileged: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mpi-worker-1
+  labels:
+    name: mpi-worker
+spec:
+  hostname: mpi-worker-1
+  subdomain: mpi-cluster
+  containers:
+  - image: hannahnw124/slurm_sing_mpi_1
+    name: mpi-worker
+    securityContext:
+      privileged: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mpi-worker-2
+  labels:
+    name: mpi-worker
+spec:
+  hostname: mpi-worker-2
+  subdomain: mpi-cluster
+  containers:
+  - image: hannahnw124/slurm_sing_mpi_1
+    name: mpi-worker
+    securityContext:
+      privileged: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mpi-worker-3
+  labels:
+    name: mpi-worker
+spec:
+  hostname: mpi-worker-3
+  subdomain: mpi-cluster
+  containers:
+  - image: hannahnw124/slurm_sing_mpi_1
+    name: mpi-worker
+    securityContext:
+      privileged: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mpi-cluster
+spec:
+  selector:
+    name: mpi-worker
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mpi-scheduler
+spec:
+  selector:
+    name: mpi-scheduler
+  ports:
+    - protocol: TCP
+      port: 22
+      targetPort: 22

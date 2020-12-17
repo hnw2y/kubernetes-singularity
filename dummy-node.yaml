@@ -1,0 +1,18 @@
+apiVersion: v1
+proxy:
+  secretToken: "135971cf603ef5ebee8fde5352597e9de3a9fa2cf67d8c8c43d039aa23ec1420"
+singleuser:                        
+  image:                                                                            
+    name: hannahnw124/slurm_sing_mpi_1                                               
+    tag: latest                                                                     
+    pullPolicy: IfNotPresent                                                        
+  uid: 0                                                                            
+  cmd: start-singleuser.sh                                                                                                                          
+  extraEnv:                                                                         
+    GRANT_SUDO: "yes"                                                               
+    NOTEBOOK_ARGS: "--allow-root"                                                   
+    HOME: "/home/jovyan"                                                            
+  memory:                                                                           
+    limit: 32G                                                                   
+  storage:                                                                          
+    capacity: 5G

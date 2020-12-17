@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dummy-node
+  labels:
+    name: dummy-node
+spec:
+  hostname: dummy-node
+  subdomain: mpi-cluster
+  containers:
+  - image: hannahnw124/slurm_sing_mpi_1
+    name: dummy-node

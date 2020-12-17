@@ -1,0 +1,23 @@
+minikube start
+
+.\helm upgrade --install jhub jupyterhub/jupyterhub --namespace testing --version=0.9.0 --values config.yaml
+
+kubectl --namespace testing port-forward svc/proxy-public 9000:80
+
+*in browser type
+localhost:9000
+
+
+
+
+kubectl --namespace testing apply -f mpi-cluster.yaml
+kubectl --namespace testing apply -f mpi-scheduler-service.yaml
+kubectl --namespace testing apply -f config.yaml
+
+kubectl --namespace testing get pods
+
+
+kubectl exec -it --namespace testing mpi-scheduler -- /bin/bash 
+
+mpi-scheduler.mpi-cluster.testing.svc.cluster.local
+mpi-worker-0.mpi-cluster.testing.svc.cluster.local
