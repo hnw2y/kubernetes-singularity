@@ -1,0 +1,1 @@
+This folder will not contain the gromacs.sif file for the singularity container because the file is too large for github. 
