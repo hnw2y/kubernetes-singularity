@@ -9,24 +9,33 @@ WORKDIR /root
 RUN apt-get update && \      
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \             
-    cryptsetup-bin \                  
+    cryptsetup-bin \  
+    dnsutils \
     libgpgme-dev \                   
     libseccomp-dev \                                   
     pkg-config \                    
     git \                        
     golang \                       
-    rsync \                  
+    rsync \
+    nfs-common \
+    netbase \
+    ssh \
+    iproute2 \
     squashfs-tools \           
-    uuid-dev \             
-    openssh-server \         
+    uuid-dev \        
+    kmod \
+    openssh-server \ 
+    rpcbind \
     openmpi-bin \
     gromacs-openmpi \                                     
     vim \
     slurm-wlm \
     slurm-client \  
-    wget
+    wget \
+    && apt-get clean
 
 
+# SLURM
 RUN echo "Set disable_coredump false" >> /etc/sudo.conf
 COPY slurm.conf /etc/slurm-llnl/slurm.conf
 RUN chmod 777 /var/spool
@@ -42,6 +51,9 @@ RUN ./mconfig && \
     make -C ./builddir install
 
 WORKDIR /
+
+#NFS directory
+RUN mkdir /home/volumes
 
 #copies startup script and sets permissions
 COPY start_ssh_server.sh /usr/local/bin/start_ssh_server.sh
